@@ -198,18 +198,11 @@ if __name__ == "__main__":
     record_every = 20
 
     input_dim, n_samples = tr_X.shape
-    # input -> hidden -> output
-    # you're encouraged to explore other architectures with more or less number of layers
-    # Is more layers the better?
-    # Will ReLU work better than Sigmoid/Tanh?
+
     dimensions = [input_dim, 32, 16, num_classes]
     activation_funcs = {1:Tanh, 2:ReLU, 3:Softmax}
     nn = NN(dimensions, activation_funcs)
     nn.train(tr_X, tr_Y, te_X, te_Y, iter_num, lr, weight_decay, batch_size, record_every)
-    # after training finishes, save the model parameters
-    #with open('../data/trained_model.pkl', 'wb') as f:
-    #    pickle.dump(nn, f)
-
     # evaluate the model on the test set and report the detailed performance
     predicted = np.argmax(nn.forward(te_X), axis=0)
     ground_truth_labels = np.argmax(te_Y, axis=0)
