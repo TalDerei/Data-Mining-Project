@@ -121,7 +121,7 @@ class NN:
         return 1.0 - accuracy_score(np.array(true_labels).flatten(), np.array(predicted_labels).flatten())
 
 if __name__ == "__main__":
-    print("Enter the data file name")
+    print("Enter the data file name (e.g. yale.txt, cho.txt, iyer.txt): ")
     fname = input()
     print("Enter the number of classes")
     num_classes = int(input())
@@ -129,7 +129,7 @@ if __name__ == "__main__":
     truth = []
     t_points = []
     t_truth = []
-    if(fname == "Yale"):
+    if(fname == "yale.txt"):
         with open("StTrainFile1.txt", "r") as f1:
             red = f1.read().split("\n")
             for i in red:
