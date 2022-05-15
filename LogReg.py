@@ -44,7 +44,7 @@ def train(X, Y, X_test, Y_test, num_iters, lr):
           print(metrics.auc(pr, tr))
     return W, ret 
 if __name__ == "__main__":
-    print("Enter the data file name")
+    print("Please enter file (e.g. yale.txt, cho.txt, iyer.txt): ")
     fname = input()
     print("Enter the number of classes")
     num_classes = int(input())
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     truth = []
     t_points = []
     t_truth = []
-    if(fname == "Yale"):
+    if(fname == "yale.txt"):
         with open("StTrainFile1.txt", "r") as f1:
             red = f1.read().split("\n")
             for i in red:

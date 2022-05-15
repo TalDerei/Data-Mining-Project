@@ -105,8 +105,8 @@ class KNN:
     def classify(self, x):
         #compute distances and get k nearest samples
         min_distance = [np.sqrt(np.sum((x - training_set)**2)) for training_set in self.training_set]
-        indices = np.argsort(min_distance)[:self.K]
-        labels = [self.training_labels[i] for i in indices]
+        index = np.argsort(min_distance)[:self.K]
+        labels = [self.training_labels[i] for i in index]
         popular_label = mode(labels)
         return(popular_label)
 
@@ -114,6 +114,11 @@ class KNN:
         # Print accuracies, f1-score, and AUC
         print("Classification report for the k-nearest neighbor \n%s\n"
                 % metrics.classification_report(np.squeeze(np.asarray(self.tesing_labels)), np.squeeze(self.predicition), digits=3))
+        print("Confusion matrix: \n%s\n"
+              % metrics.confusion_matrix(np.squeeze(np.asarray(self.tesing_labels)), np.squeeze(self.predicition)))
+        print("AUC:")
+        pr, tr, _ = metrics.roc_curve(self.tesing_labels, self.predicition, pos_label=1)
+        print(metrics.auc(pr, tr))
 
 def main(): 
     # Call constructor and create object
