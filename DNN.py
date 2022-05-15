@@ -164,10 +164,7 @@ if __name__ == "__main__":
         red = f.read().split("\n")
         counter = 1
         for i in red:
-            if(fname == "iyer.txt" or fname == "cho.txt"):
-                i = i.split("\t")
-            else:
-                i = i.split(" ")
+            i = i.split(" ")
             if(len(i) > 1):
                     if(i[1] == -1):
                         continue
