@@ -47,8 +47,8 @@ class NN:
         num_neurons = {}
         for l in range(self.num_layers):
             num_neurons[l + 1] = dimensions[l + 1]
-            nin, nout = dimensions[l], dimensions[l + 1]
-            self.W[l + 1] = np.random.normal(0.0, .1, (nout, nin))
+            start, end = dimensions[l], dimensions[l + 1]
+            self.W[l + 1] = np.random.normal(0.0, .1, (end, start))
             self.b[l + 1] = np.zeros((dimensions[l + 1], 1))
             self.g[l + 1] = activation_funcs[l + 1]
 
@@ -99,15 +99,16 @@ class NN:
         return 1.0 - accuracy_score(np.array(true_labels).flatten(), np.array(predicted_labels).flatten())
 
 if __name__ == "__main__":
-    print("Enter the data file name")
+    print("Please enter file (e.g. yale.txt, cho.txt, iyer.txt): ")
     fname = input()
-    print("Enter the number of classes")
-    num_classes = int(input())
+    files = ["yale.txt", "cho.txt", "iyer.txt"]
+    classes = [38,5,10]
+    num_classes = classes[files.index(fname)]
     points = []
     truth = []
     t_points = []
     t_truth = []
-    if(fname == "Yale"):
+    if(fname == "yale.txt"):
         with open("StTrainFile1.txt", "r") as f1:
             red = f1.read().split("\n")
             for i in red:
@@ -120,7 +121,6 @@ if __name__ == "__main__":
                 totruth[int(i[-1]) - 1] = 1
                 for j in range(len(i) - 1):
                     toAdd.append((float(i[j]) - .1) * 10)
-                    #toAdd.append(float(i[j]))
                 points.append(np.array(toAdd))
                 truth.append(np.array(totruth))
         with open("StTestFile1.txt", "r") as f2:
@@ -134,7 +134,6 @@ if __name__ == "__main__":
                 totruth[int(i[-1]) - 1] = 1
                 for j in range(len(i) - 1):
                     toAdd.append((float(i[j]) - .1) * 10)
-                    #toAdd.append(float(i[j]))
                 t_points.append(np.array(toAdd))
                 t_truth.append(np.array(totruth))
     else:
@@ -158,22 +157,18 @@ if __name__ == "__main__":
                         else:
                             t_truth.append(np.array(totruth))
                             t_points.append(np.array(toAdd))
-                        counter += 1
-    #print(np.array(truth))
-    
+                        counter += 1   
     tr_X, tr_Y, te_X, te_Y = np.array(points).T, np.array(truth).T, np.array(t_points).T, np.array(t_truth).T
-    print(tr_X.shape)
-    print(te_X.shape)
-    print(te_Y)
 
+    #Hyperparameters
     iter_num = 1001
-    lr = 0.001
+    lr = 0.1
     weight_decay = 0.0001
     record_every = 50
 
     input_dim, n_samples = tr_X.shape
-    dimensions = [input_dim, 50, 100, 50, num_classes]
-    activation_funcs = [None, ReLU, ReLU, ReLU, Softmax]
+    dimensions = [input_dim, 50, 100, num_classes]
+    activation_funcs = [None, Tanh, ReLU, Softmax]
     nn = NN(dimensions, activation_funcs)
     nn.train(tr_X, tr_Y, te_X, te_Y, iter_num, lr, weight_decay, record_every)
     # evaluate the model on the test set and report the detailed performance

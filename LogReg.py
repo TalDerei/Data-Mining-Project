@@ -9,50 +9,45 @@ def softmax(Z):
 
     return np.exp(Z) / np.sum(np.exp(Z), axis = 0)
 
-def loss(A, Y):
-    
-    eps = np.finfo(float).eps #make sure no div by 0
-    return -1 * np.sum(Y * np.log(A + eps))
-
 def dW(Z, X, Y):
     dZ = softmax(Z) - Y
     ans = np.dot(dZ,X.T)
     ans = ans.T
     return ans
 
-def train(X, Y, X_test, Y_test, num_iters, lr):
+def train(X, Y, num_iters, lr):
     W = np.zeros((X.shape[0], Y.shape[0]))
     W = np.array(W, dtype=np.double)
-    ret = []
     for i in range(0, num_iters):
       Z = np.array(linear(W, X), dtype=np.float64)
-      Zt = np.array(linear(W, X_test), dtype=np.float64)
-      rloss = loss(softmax(Z), Y)
-      tloss = loss(softmax(Zt), Y_test)
       dw =  lr * dW(Z, X, Y)
-      ret.append([rloss, tloss])
       W -= dw
-      if(i % 100 == 0):
-          predicted = np.argmax(softmax(Zt), axis=0)
-          ground_truth_labels = np.argmax(Y_test, axis=0)
-          print("Classification report for the neural network \n%s\n"
-              % metrics.classification_report(np.squeeze(np.asarray(ground_truth_labels)), np.squeeze(predicted), digits=3))
-          print("Confusion matrix \n%s\n"
+    return W
+def test(W, X_test, Y_test):
+        Zt = np.array(linear(W, X_test), dtype=np.float64)
+        predicted = np.argmax(softmax(Zt), axis=0)
+        ground_truth_labels = np.argmax(Y_test, axis=0)
+        print("Classification report for Logistic Regression \n%s\n"
+            % metrics.classification_report(np.squeeze(np.asarray(ground_truth_labels)), np.squeeze(predicted), digits=3))
+        print("Confusion matrix \n%s\n"
               % metrics.confusion_matrix(np.squeeze(np.asarray(ground_truth_labels)), np.squeeze(predicted)))
-          print("AUC:")
-          pr, tr, _ = metrics.roc_curve(ground_truth_labels, predicted, pos_label=1)
-          print(metrics.auc(pr, tr))
-    return W, ret 
+        print("F1 Score:")
+        print(metrics.f1_score(ground_truth_labels, predicted, average='macro'))
+        print("AUC:")
+        pr, tr, _ = metrics.roc_curve(ground_truth_labels, predicted, pos_label=1)
+        print(metrics.auc(pr, tr))
+       
 if __name__ == "__main__":
     print("Please enter file (e.g. yale.txt, cho.txt, iyer.txt): ")
     fname = input()
-    print("Enter the number of classes")
-    num_classes = int(input())
+    files = ["yale.txt", "cho.txt", "iyer.txt"]
+    classes = [38,5,10]
+    num_classes = classes[files.index(fname)]
     points = []
     truth = []
     t_points = []
     t_truth = []
-    if(fname == "yale.txt"):
+    if(fname == "yale"):
         with open("StTrainFile1.txt", "r") as f1:
             red = f1.read().split("\n")
             for i in red:
@@ -61,10 +56,8 @@ if __name__ == "__main__":
                     continue
                 toAdd = []
                 totruth = [0 for i in range(num_classes)]
-                #print(i)
                 totruth[int(i[-1]) - 1] = 1
                 for j in range(len(i) - 1):
-                    #toAdd.append((float(i[j]) - .1) * 10)
                     toAdd.append(float(i[j]))
                 points.append(np.array(toAdd))
                 truth.append(np.array(totruth))
@@ -78,7 +71,6 @@ if __name__ == "__main__":
                 totruth = [0 for i in range(num_classes)]
                 totruth[int(i[-1]) - 1] = 1
                 for j in range(len(i) - 1):
-                    #toAdd.append((float(i[j]) - .1) * 10)
                     toAdd.append(float(i[j]))
                 t_points.append(np.array(toAdd))
                 t_truth.append(np.array(totruth))
@@ -104,14 +96,8 @@ if __name__ == "__main__":
                             t_truth.append(np.array(totruth))
                             t_points.append(np.array(toAdd))
                         counter += 1
-    #print(np.array(truth))
-    
-    tr_X, tr_Y, te_X, te_Y = np.array(points).T, np.array(truth).T, np.array(t_points).T, np.array(t_truth).T
-    print(tr_X.shape)
-    print(te_X.shape)
-    print(te_Y)
-
-    iter_num = 1001
+    iter_num = 201
     lr = 0.001
-    train(tr_X, tr_Y, te_X, te_Y, iter_num, lr)
-    #print(res)
+    tr_X, tr_Y, te_X, te_Y = np.array(points).T, np.array(truth).T, np.array(t_points).T, np.array(t_truth).T
+    model = train(tr_X, tr_Y, iter_num, lr)
+    test(model, np.array(te_X), np.array(te_Y))
