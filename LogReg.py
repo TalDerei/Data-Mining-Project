@@ -47,7 +47,7 @@ if __name__ == "__main__":
     truth = []
     t_points = []
     t_truth = []
-    if(fname == "yale"):
+    if(fname == "yale.txt"):
         with open("StTrainFile1.txt", "r") as f1:
             red = f1.read().split("\n")
             for i in red:

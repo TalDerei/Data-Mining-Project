@@ -3,16 +3,6 @@ import numpy as np
 from sklearn import metrics
 from sklearn.metrics import accuracy_score
 
-class Sigmoid:
-    @staticmethod
-    def activate(Z):
-        return np.reciprocal(np.exp(-1 * Z) + 1)
-
-    @staticmethod
-    def gradient(Z):
-        ret = np.reciprocal(np.exp(-1 * Z) + 1) - np.reciprocal(1 + 2 * np.exp(-1 * Z) + np.exp(-2 * Z))
-        return ret
-
 class Softmax:
     @staticmethod
     def activate(Z):
@@ -117,7 +107,6 @@ if __name__ == "__main__":
                     continue
                 toAdd = []
                 totruth = [0 for i in range(num_classes)]
-                #print(i)
                 totruth[int(i[-1]) - 1] = 1
                 for j in range(len(i) - 1):
                     toAdd.append((float(i[j]) - .1) * 10)
